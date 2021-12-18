@@ -6,6 +6,7 @@ authors = ["JDSeiler <jorsei1p217@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
+requests = "^2.26.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
