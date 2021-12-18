@@ -7,9 +7,11 @@ authors = ["JDSeiler <jorsei1p217@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.6"
 requests = "^2.26.0"
+redis = "^4.0.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+flake8 = "^4.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
