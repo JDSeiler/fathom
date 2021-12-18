@@ -6,6 +6,7 @@ import commands.resume_traversal
 
 def dispatch(args: Dict[str, Any]):
     command_name = args['cmd']
+
     if command_name == 'list':
         commands.list_sessions.run()
     elif command_name == 'start':
