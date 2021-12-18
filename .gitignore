@@ -7,3 +7,5 @@ redis/*
 **/__pycache__
 
 .env
+
+*.json
