@@ -1,2 +1,4 @@
 redis/*
 !redis/redis.conf
+
+.vscode
