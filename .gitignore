@@ -2,3 +2,6 @@ redis/*
 !redis/redis.conf
 
 .vscode
+
+.pytest_cache
+**/__pycache__
