@@ -1,4 +1,4 @@
-from fathom_temp import __version__
+from fathom import __version__
 
 
 def test_version():
