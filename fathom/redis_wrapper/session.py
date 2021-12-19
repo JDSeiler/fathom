@@ -55,4 +55,10 @@ class Session:
 
         # Last element is included so we subtract one to retreive
         # exactly `batch_size` elements
-        return r.lrange(q_path, 0, batch_size-1)
+        elements = r.lrange(q_path, 0, batch_size-1)
+
+        # translates to: Remove the first `batch_size` elements
+        # really means, only keep elements from index `batch_size` till the end
+        r.ltrim(q_path, batch_size, -1)
+
+        return elements
