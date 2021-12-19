@@ -55,4 +55,4 @@ class Session:
 
         # Last element is included so we subtract one to retreive
         # exactly `batch_size` elements
-        return [r.lpop(q_path) for _i in range(0, batch_size)]
+        return r.lrange(q_path, 0, batch_size-1)
