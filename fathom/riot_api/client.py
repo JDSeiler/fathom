@@ -1,5 +1,5 @@
 from decouple import config
-from typing import Any, Dict, Optional, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict
 import requests
 import time
 
@@ -23,20 +23,20 @@ class Client:
         self.americas_route = 'https://americas.api.riotgames.com'
         self.PAUSE_TIME = 0.05  # 50 ms to avoid going over the 20 req / sec limit
 
-    def get_summoner_matches(self, summoner_name: str):
-        summoner_info_res = self.get(self.na1_route, f"/lol/summoner/v4/summoners/by-name/{summoner_name}")
-        time.sleep(self.PAUSE_TIME)
-        puuid = summoner_info_res['payload']['puuid']
+    def get_summoner_puuid(self, summoner_name: str) -> str:
+        summoner_info_res = self.__get(self.na1_route, f"/lol/summoner/v4/summoners/by-name/{summoner_name}")
+        return summoner_info_res['payload']['puuid']
 
+    def get_match_ids(self, summoner_puuid: str) -> List[str]:
         match_ids = []
         more_matches = True
         curr_idx = 0
         batch_size = 50
 
         while more_matches:
-            match_ids_res = self.get(
+            match_ids_res = self.__get(
                 self.americas_route,
-                f"/lol/match/v5/matches/by-puuid/{puuid}/ids",
+                f"/lol/match/v5/matches/by-puuid/{summoner_puuid}/ids",
                 {'start': curr_idx, 'count': batch_size}
             )
 
@@ -53,25 +53,22 @@ class Client:
                 curr_idx += batch_size
             time.sleep(self.PAUSE_TIME)
 
-        matches = []
-        for idx, m_id in enumerate(match_ids):
-            print(f"Fetching match {idx+1} of {len(match_ids)}")
-            match_info_res = self.get(
-                self.americas_route,
-                f"/lol/match/v5/matches/{m_id}"
-            )
+        return match_ids
 
-            if match_info_res['status'] != 200:
-                print(match_info_res['status'])
-                print(match_info_res['text'])
-                raise Exception('Got a non-ok response while fetching match info')
+    def fetch_match_info(self, match_id: str):
+        match_info_res = self.__get(
+            self.americas_route,
+            f"/lol/match/v5/matches/{match_id}"
+        )
 
-            matches.append(match_info_res['payload'])
-            time.sleep(self.PAUSE_TIME)
+        if match_info_res['status'] != 200:
+            print(match_info_res['status'])
+            print(match_info_res['text'])
+            raise Exception('Got a non-ok response while fetching match info')
 
-        return matches
+        return match_info_res['payload']
 
-    def get(self, route: str, request_path: str, query_params: Dict[str, str] = None) -> ApiResponse:
+    def __get(self, route: str, request_path: str, query_params: Dict[str, str] = None) -> ApiResponse:
         full_request_path = route + request_path
         headers = {'X-Riot-Token': self.api_key}
 
